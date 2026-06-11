@@ -1,8 +1,9 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { ArrowRight, LogIn, LogOut, Check } from "lucide-react";
+import { ArrowRight, LogIn, LogOut } from "lucide-react";
 import type { EventDay, Mode } from "@/lib/attendance";
 import { OfflineBanner } from "@/components/OfflineBanner";
+import fcLogo from "@/assets/fc-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,10 +18,10 @@ export const Route = createFileRoute("/")({
   component: SelectDayMode,
 });
 
-const DAYS: { day: EventDay; date: string }[] = [
-  { day: "Friday", date: "Day One" },
-  { day: "Saturday", date: "Day Two" },
-  { day: "Sunday", date: "Day Three" },
+const DAYS: { day: EventDay; label: string }[] = [
+  { day: "Friday", label: "Day One" },
+  { day: "Saturday", label: "Day Two" },
+  { day: "Sunday", label: "Day Three" },
 ];
 
 function SelectDayMode() {
@@ -39,93 +40,76 @@ function SelectDayMode() {
     <main className="relative flex min-h-[100dvh] flex-col bg-background text-foreground">
       <OfflineBanner />
 
-      {/* ambient gold glow */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-72 opacity-60"
-        style={{
-          background:
-            "radial-gradient(60% 100% at 50% 0%, oklch(0.82 0.16 86 / 0.18), transparent 70%)",
-        }}
-      />
-
-      <header className="safe-top relative px-6 pt-6">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80">
-          1st Combined SA
+      <header className="safe-top relative flex flex-col items-center px-6 pt-4 text-center">
+        <div className="relative">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-0 -z-10 blur-2xl"
+            style={{ background: "radial-gradient(circle, oklch(1 0 0 / 0.18), transparent 70%)" }}
+          />
+          <img
+            src={fcLogo.url}
+            alt="First Church of Our Lord Jesus Christ"
+            className="size-20 rounded-full object-cover ring-1 ring-white/15"
+          />
+        </div>
+        <p className="mt-5 text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
+          1st Combined South African
         </p>
-        <h1 className="mt-1 font-display text-[28px] font-semibold leading-[1.05] text-foreground">
+        <h1 className="mt-2 font-display text-[34px] leading-[1.02] tracking-tight">
           Holy Convocation
         </h1>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <p className="mt-2 text-xs text-muted-foreground">
           First Church of Our Lord Jesus Christ, Inc.
         </p>
       </header>
 
-      <section className="relative flex-1 px-5 pt-8">
-        <SectionLabel>Event day</SectionLabel>
-        <div className="mt-3 space-y-2.5">
-          {DAYS.map((d) => {
-            const active = day === d.day;
-            return (
-              <button
-                key={d.day}
-                onClick={() => setDay(d.day)}
-                className={`tap group flex w-full items-center justify-between rounded-2xl border px-5 py-4 text-left ${
-                  active
-                    ? "border-primary/60 bg-primary/10 shadow-[0_0_0_1px_var(--color-primary)_inset]"
-                    : "border-border bg-surface"
-                }`}
-              >
-                <div>
-                  <p
-                    className={`font-display text-lg font-semibold ${
-                      active ? "text-primary" : "text-foreground"
-                    }`}
-                  >
-                    {d.day}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{d.date}</p>
-                </div>
-                <Dot active={!!active} />
-              </button>
-            );
-          })}
+      <section className="relative flex-1 px-6 pt-10">
+        <SectionLabel>Event Day</SectionLabel>
+        <div className="mt-4 space-y-3">
+          {DAYS.map((d) => (
+            <DayCard
+              key={d.day}
+              day={d.day}
+              label={d.label}
+              active={day === d.day}
+              onClick={() => setDay(d.day)}
+            />
+          ))}
         </div>
 
-        <div className="mt-7">
+        <div className="mt-9">
           <SectionLabel>Mode</SectionLabel>
-          <div className="mt-3 grid grid-cols-2 gap-2.5">
+          <div className="mt-4 grid grid-cols-2 gap-3">
             <ModeCard
-              icon={<LogIn className="size-5" />}
+              icon={<LogIn className="size-5" strokeWidth={1.6} />}
               label="Check-In"
               active={mode === "check-in"}
               onClick={() => setMode("check-in")}
-              tint="primary"
             />
             <ModeCard
-              icon={<LogOut className="size-5" />}
+              icon={<LogOut className="size-5" strokeWidth={1.6} />}
               label="Check-Out"
               active={mode === "check-out"}
               onClick={() => setMode("check-out")}
-              tint="accent"
             />
           </div>
         </div>
       </section>
 
-      <footer className="safe-bottom relative px-5 pt-6">
+      <footer className="safe-bottom relative px-6 pt-8">
         <button
           onClick={confirm}
           disabled={!ready}
-          className={`tap flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-semibold ${
+          className={`tap flex h-14 w-full items-center justify-center gap-2 rounded-2xl text-[15px] font-semibold tracking-tight ${
             ready
-              ? "bg-primary text-primary-foreground shadow-[0_10px_30px_-12px_var(--color-primary)]"
-              : "bg-surface-2 text-muted-foreground"
+              ? "bg-white text-[#0a0d1a] shadow-[0_10px_40px_-12px_rgba(255,255,255,0.5)]"
+              : "glass text-muted-foreground"
           }`}
         >
           {ready ? (
             <>
-              Start Scanning <ArrowRight className="size-5" />
+              Start Scanning <ArrowRight className="size-5" strokeWidth={2} />
             </>
           ) : (
             "Select day and mode"
@@ -138,21 +122,58 @@ function SelectDayMode() {
 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="px-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+    <p className="px-1 text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
       {children}
     </p>
   );
 }
 
-function Dot({ active }: { active: boolean }) {
+function DayCard({
+  day,
+  label,
+  active,
+  onClick,
+}: {
+  day: string;
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
   return (
-    <span
-      className={`flex size-6 items-center justify-center rounded-full border ${
-        active ? "border-primary bg-primary text-primary-foreground" : "border-border bg-transparent"
+    <button
+      onClick={onClick}
+      className={`tap relative flex w-full items-center justify-between rounded-2xl px-5 py-5 text-left ${
+        active
+          ? "bg-white text-[#0a0d1a] shadow-[0_0_0_1px_rgba(255,255,255,0.9),0_10px_40px_-12px_rgba(255,255,255,0.45)]"
+          : "glass text-foreground"
       }`}
     >
-      {active && <Check className="size-3.5" strokeWidth={3} />}
-    </span>
+      <div>
+        <p
+          className={`font-display text-[22px] leading-none tracking-tight ${
+            active ? "text-[#0a0d1a]" : "text-foreground"
+          }`}
+        >
+          {day}
+        </p>
+        <p
+          className={`mt-1.5 text-[11px] uppercase tracking-[0.22em] ${
+            active ? "text-[#0a0d1a]/60" : "text-muted-foreground"
+          }`}
+        >
+          {label}
+        </p>
+      </div>
+      <span
+        className={`flex size-7 items-center justify-center rounded-full border ${
+          active ? "border-[#0a0d1a]/20 bg-[#0a0d1a]" : "border-white/15"
+        }`}
+      >
+        <span
+          className={`size-2 rounded-full ${active ? "bg-white" : "bg-transparent"}`}
+        />
+      </span>
+    </button>
   );
 }
 
@@ -161,31 +182,29 @@ function ModeCard({
   label,
   active,
   onClick,
-  tint,
 }: {
   icon: React.ReactNode;
   label: string;
   active: boolean;
   onClick: () => void;
-  tint: "primary" | "accent";
 }) {
-  const activeBg = tint === "primary" ? "bg-primary/12 border-primary/60" : "bg-accent/15 border-accent/60";
-  const iconColor = tint === "primary" ? "text-primary" : "text-accent";
   return (
     <button
       onClick={onClick}
-      className={`tap flex h-28 flex-col items-start justify-between rounded-2xl border p-4 text-left ${
-        active ? activeBg : "border-border bg-surface"
+      className={`tap flex h-32 flex-col items-center justify-center gap-3 rounded-2xl ${
+        active
+          ? "bg-white text-[#0a0d1a] shadow-[0_0_0_1px_rgba(255,255,255,0.9),0_10px_40px_-12px_rgba(255,255,255,0.45)]"
+          : "glass text-foreground"
       }`}
     >
       <span
-        className={`flex size-10 items-center justify-center rounded-xl ${
-          active ? "bg-background/40" : "bg-surface-2"
-        } ${active ? iconColor : "text-muted-foreground"}`}
+        className={`flex size-11 items-center justify-center rounded-full ${
+          active ? "bg-[#0a0d1a] text-white" : "bg-white/5 text-white"
+        }`}
       >
         {icon}
       </span>
-      <span className="font-display text-[15px] font-semibold">{label}</span>
+      <span className="text-[13px] font-medium tracking-tight">{label}</span>
     </button>
   );
 }
