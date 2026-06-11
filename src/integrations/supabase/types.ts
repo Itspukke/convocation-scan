@@ -14,7 +14,71 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      attendance: {
+        Row: {
+          check_in_time: string | null
+          check_out_time: string | null
+          created_at: string
+          event_day: Database["public"]["Enums"]["event_day"]
+          id: string
+          member_id: string
+        }
+        Insert: {
+          check_in_time?: string | null
+          check_out_time?: string | null
+          created_at?: string
+          event_day: Database["public"]["Enums"]["event_day"]
+          id?: string
+          member_id: string
+        }
+        Update: {
+          check_in_time?: string | null
+          check_out_time?: string | null
+          created_at?: string
+          event_day?: Database["public"]["Enums"]["event_day"]
+          id?: string
+          member_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "attendance_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      members: {
+        Row: {
+          auxiliary_group: string
+          contact_number: string | null
+          created_at: string
+          full_name: string
+          id: string
+          photo_url: string | null
+          qr_code_value: string
+        }
+        Insert: {
+          auxiliary_group: string
+          contact_number?: string | null
+          created_at?: string
+          full_name: string
+          id?: string
+          photo_url?: string | null
+          qr_code_value: string
+        }
+        Update: {
+          auxiliary_group?: string
+          contact_number?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          photo_url?: string | null
+          qr_code_value?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +87,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      event_day: "Friday" | "Saturday" | "Sunday"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +214,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      event_day: ["Friday", "Saturday", "Sunday"],
+    },
   },
 } as const
