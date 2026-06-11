@@ -203,10 +203,12 @@ function ResultSheet({
   outcome: ScanOutcome;
   onDismiss: () => void;
 }) {
-  const tint =
-    outcome.kind === "success" ? "success" : outcome.kind === "warning" ? "warning" : "destructive";
   const Icon =
     outcome.kind === "success" ? CheckCircle2 : outcome.kind === "warning" ? AlertTriangle : XCircle;
+  const iconWrap =
+    outcome.kind === "warning"
+      ? "bg-warning/15 text-warning"
+      : "bg-destructive/15 text-destructive";
 
   return (
     <div className="absolute inset-0 z-40 flex items-end bg-black/55 backdrop-blur-sm">
@@ -217,9 +219,7 @@ function ResultSheet({
           <SuccessBody outcome={outcome} />
         ) : (
           <div className="px-6 pt-6">
-            <div
-              className={`flex size-14 items-center justify-center rounded-2xl bg-${tint}/15 text-${tint}`}
-            >
+            <div className={`flex size-14 items-center justify-center rounded-2xl ${iconWrap}`}>
               <Icon className="size-7" />
             </div>
             <p className="mt-4 font-display text-[22px] font-semibold leading-tight text-foreground">
