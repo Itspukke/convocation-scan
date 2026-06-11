@@ -63,6 +63,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         content: "Auxiliary check-in for the 1st Combined SA Holy Convocation.",
       },
       { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "Holy Convocation · Check-In" },
+      { name: "description", content: "Mobile app for event attendance tracking." },
+      { property: "og:description", content: "Mobile app for event attendance tracking." },
+      { name: "twitter:description", content: "Mobile app for event attendance tracking." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/69f5135d-b5ba-4b56-8e7c-57ed5acaea77/id-preview-d02963f7--1b61c91b-70b6-478d-8f4e-b0919c228236.lovable.app-1781181590665.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/69f5135d-b5ba-4b56-8e7c-57ed5acaea77/id-preview-d02963f7--1b61c91b-70b6-478d-8f4e-b0919c228236.lovable.app-1781181590665.png" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
