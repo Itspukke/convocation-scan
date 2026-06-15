@@ -69,11 +69,18 @@ function CheckInScreen() {
   return (
     <main className="safe-top relative flex min-h-[100dvh] flex-col px-5 pt-5">
       <header className="flex items-center justify-between">
-        <div>
-          <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
-            Holy Convocation
-          </p>
-          <h1 className="mt-1 font-display text-[26px] leading-none tracking-tight">Check-In</h1>
+        <div className="flex items-center gap-3">
+          <img
+            src={fcLogo.url}
+            alt="First Church of Our Lord Jesus Christ"
+            className="size-12 rounded-full object-cover ring-1 ring-white/15"
+          />
+          <div>
+            <p className="text-[10px] font-medium uppercase tracking-[0.32em] text-muted-foreground">
+              Holy Convocation
+            </p>
+            <h1 className="mt-0.5 font-display text-[22px] leading-none tracking-tight">Check-In</h1>
+          </div>
         </div>
         <Pill>
           <span className="size-1.5 rounded-full bg-white" />
