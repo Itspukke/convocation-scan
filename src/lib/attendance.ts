@@ -5,54 +5,80 @@ export type Mode = "check-in" | "check-out";
 
 export type Member = {
   id: string;
+  first_name: string | null;
+  last_name: string | null;
   full_name: string;
   auxiliary_group: string;
   contact_number: string | null;
+  phone_normalized: string | null;
   photo_url: string | null;
-  qr_code_value: string;
 };
 
-export type ScanOutcome =
+export type AttendanceRow = {
+  id: string;
+  member_id: string;
+  event_day: EventDay;
+  check_in_time: string | null;
+  check_out_time: string | null;
+};
+
+export type Outcome =
   | { kind: "success"; member: Member; day: EventDay; mode: Mode; time: string }
   | { kind: "error" | "warning"; title: string; message: string };
 
-export async function processScan(
-  rawCode: string,
-  day: EventDay,
-  mode: Mode,
-): Promise<ScanOutcome> {
-  const code = rawCode.trim();
-  if (!code) {
-    return { kind: "error", title: "QR code not recognised", message: "Empty code." };
-  }
+export function normalizePhone(input: string): string {
+  return (input || "").replace(/\D/g, "");
+}
 
-  const { data: member, error: memberErr } = await supabase
+export function displayName(m: Pick<Member, "first_name" | "last_name" | "full_name">) {
+  const fn = [m.first_name, m.last_name].filter(Boolean).join(" ").trim();
+  return fn || m.full_name || "Member";
+}
+
+export function initials(m: Pick<Member, "first_name" | "last_name" | "full_name">) {
+  const name = displayName(m);
+  const parts = name.split(/\s+/).filter(Boolean);
+  return ((parts[0]?.[0] ?? "") + (parts[1]?.[0] ?? "")).toUpperCase() || "·";
+}
+
+export async function findMemberByPhone(rawPhone: string): Promise<
+  | { ok: true; member: Member }
+  | { ok: false; title: string; message: string }
+> {
+  const phone = normalizePhone(rawPhone);
+  if (phone.length < 6) {
+    return { ok: false, title: "Phone number too short", message: "Enter the full phone number to look up the member." };
+  }
+  const { data, error } = await supabase
     .from("members")
     .select("*")
-    .eq("qr_code_value", code)
+    .eq("phone_normalized", phone)
     .maybeSingle();
 
-  if (memberErr) {
-    return { kind: "error", title: "Connection issue", message: memberErr.message };
-  }
-  if (!member) {
+  if (error) return { ok: false, title: "Connection issue", message: error.message };
+  if (!data) {
     return {
-      kind: "error",
-      title: "QR code not recognised",
-      message: "This QR code isn't on the registered member list.",
+      ok: false,
+      title: "Phone number not found",
+      message: "No member is registered with that phone number.",
     };
   }
+  return { ok: true, member: data as unknown as Member };
+}
 
-  const { data: existing, error: existingErr } = await supabase
+export async function confirmAttendance(
+  member: Member,
+  day: EventDay,
+  mode: Mode,
+): Promise<Outcome> {
+  const { data: existing, error: exErr } = await supabase
     .from("attendance")
     .select("*")
     .eq("member_id", member.id)
     .eq("event_day", day)
     .maybeSingle();
 
-  if (existingErr) {
-    return { kind: "error", title: "Connection issue", message: existingErr.message };
-  }
+  if (exErr) return { kind: "error", title: "Connection issue", message: exErr.message };
 
   const now = new Date().toISOString();
 
@@ -60,8 +86,8 @@ export async function processScan(
     if (existing?.check_in_time) {
       return {
         kind: "warning",
-        title: "Already checked in",
-        message: `${member.full_name} was checked in earlier today.`,
+        title: "Already checked in today",
+        message: `${displayName(member)} was already checked in for ${day}.`,
       };
     }
     if (existing) {
@@ -76,22 +102,22 @@ export async function processScan(
         .insert({ member_id: member.id, event_day: day, check_in_time: now });
       if (error) return { kind: "error", title: "Could not save", message: error.message };
     }
-    return { kind: "success", member: member as Member, day, mode, time: now };
+    return { kind: "success", member, day, mode, time: now };
   }
 
   // check-out
   if (!existing?.check_in_time) {
     return {
       kind: "error",
-      title: "Can't check out",
-      message: `${member.full_name} has no check-in for ${day}.`,
+      title: "Can't check out — not checked in",
+      message: `${displayName(member)} has no check-in recorded for ${day}.`,
     };
   }
   if (existing.check_out_time) {
     return {
       kind: "warning",
-      title: "Already checked out",
-      message: `${member.full_name} was checked out earlier today.`,
+      title: "Already checked out today",
+      message: `${displayName(member)} was already checked out for ${day}.`,
     };
   }
   const { error } = await supabase
@@ -100,9 +126,10 @@ export async function processScan(
     .eq("id", existing.id);
   if (error) return { kind: "error", title: "Could not save", message: error.message };
 
-  return { kind: "success", member: member as Member, day, mode, time: now };
+  return { kind: "success", member, day, mode, time: now };
 }
 
-export function formatTime(iso: string) {
+export function formatTime(iso: string | null | undefined) {
+  if (!iso) return "—";
   return new Date(iso).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 }

@@ -54,28 +54,37 @@ export type Database = {
           auxiliary_group: string
           contact_number: string | null
           created_at: string
+          first_name: string | null
           full_name: string
           id: string
+          last_name: string | null
+          phone_normalized: string | null
           photo_url: string | null
-          qr_code_value: string
+          qr_code_value: string | null
         }
         Insert: {
           auxiliary_group: string
           contact_number?: string | null
           created_at?: string
+          first_name?: string | null
           full_name: string
           id?: string
+          last_name?: string | null
+          phone_normalized?: string | null
           photo_url?: string | null
-          qr_code_value: string
+          qr_code_value?: string | null
         }
         Update: {
           auxiliary_group?: string
           contact_number?: string | null
           created_at?: string
+          first_name?: string | null
           full_name?: string
           id?: string
+          last_name?: string | null
+          phone_normalized?: string | null
           photo_url?: string | null
-          qr_code_value?: string
+          qr_code_value?: string | null
         }
         Relationships: []
       }
