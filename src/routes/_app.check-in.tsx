@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight, Delete, Phone, X } from "lucide-react";
+import { ArrowRight, Phone, X } from "lucide-react";
 import {
   confirmAttendance,
   displayName,
@@ -15,6 +15,7 @@ import {
 } from "@/lib/attendance";
 import { Avatar } from "@/components/Avatar";
 import { DayPicker, ModePicker, Pill, SectionLabel } from "@/components/DayModeSelectors";
+import fcLogo from "@/assets/fc-logo.jpeg.asset.json";
 
 export const Route = createFileRoute("/_app/check-in")({
   head: () => ({
