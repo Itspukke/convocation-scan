@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import Papa from "papaparse";
@@ -512,5 +512,3 @@ function ConfirmDelete({ member, onCancel, onConfirm }: { member: Member; onCanc
   );
 }
 
-// Silence unused-import warnings during fast iteration
-void useEffect;
