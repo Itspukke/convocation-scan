@@ -138,23 +138,20 @@ function PhoneInput({ value, onChange }: { value: string; onChange: (v: string) 
   const ref = useRef<HTMLInputElement>(null);
   useEffect(() => { ref.current?.focus(); }, []);
 
-  function push(d: string) {
-    onChange((value + d).slice(0, 16));
-  }
-  function back() { onChange(value.slice(0, -1)); }
-
   return (
     <div className="mt-3">
       <div className="glass flex items-center gap-3 rounded-2xl px-5 py-5">
         <Phone className="size-5 text-muted-foreground" strokeWidth={1.6} />
         <input
           ref={ref}
-          inputMode="tel"
+          type="tel"
+          inputMode="numeric"
+          pattern="[0-9+\s\-]*"
           autoComplete="tel"
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder="Enter phone number"
-          className="w-full bg-transparent font-display text-[26px] tracking-tight text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
+          className="w-full bg-transparent font-display text-[24px] tracking-tight text-foreground placeholder:text-muted-foreground/50 focus:outline-none"
         />
         {value && (
           <button onClick={() => onChange("")} className="tap text-muted-foreground" aria-label="Clear">
@@ -162,30 +159,7 @@ function PhoneInput({ value, onChange }: { value: string; onChange: (v: string) 
           </button>
         )}
       </div>
-
-      <div className="mt-5 grid grid-cols-3 gap-2.5">
-        {["1","2","3","4","5","6","7","8","9"].map((n) => (
-          <KeyBtn key={n} onClick={() => push(n)}>{n}</KeyBtn>
-        ))}
-        <KeyBtn onClick={() => push("+")}>+</KeyBtn>
-        <KeyBtn onClick={() => push("0")}>0</KeyBtn>
-        <KeyBtn onClick={back} aria-label="Backspace">
-          <Delete className="mx-auto size-5" strokeWidth={1.8} />
-        </KeyBtn>
-      </div>
     </div>
-  );
-}
-
-function KeyBtn({ children, onClick, ...rest }: React.ButtonHTMLAttributes<HTMLButtonElement>) {
-  return (
-    <button
-      {...rest}
-      onClick={onClick}
-      className="tap glass h-14 rounded-2xl text-center font-display text-[22px] tracking-tight text-foreground active:bg-white/15"
-    >
-      {children}
-    </button>
   );
 }
 
