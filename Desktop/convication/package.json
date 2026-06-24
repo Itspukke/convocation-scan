@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@lovable.dev/vite-tanstack-config": "^2.6.1"
+  }
+}
